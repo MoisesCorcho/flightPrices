@@ -50,17 +50,19 @@
                     :arrival-code="$this->alert->outbound->arrivalCode"
                 />
                 
-                <x-flight.route-detail 
-                    type="return" 
-                    :time="$this->alert->return->time"
-                    :location="$this->alert->return->location"
-                    :code="$this->alert->return->code"
-                    :duration="$this->alert->return->duration"
-                    :stops="$this->alert->return->stops"
-                    :arrival-time="$this->alert->return->arrivalTime"
-                    :arrival-location="$this->alert->return->arrivalLocation"
-                    :arrival-code="$this->alert->return->arrivalCode"
-                />
+                @if($this->alert->return)
+                    <x-flight.route-detail 
+                        type="return" 
+                        :time="$this->alert->return->time"
+                        :location="$this->alert->return->location"
+                        :code="$this->alert->return->code"
+                        :duration="$this->alert->return->duration"
+                        :stops="$this->alert->return->stops"
+                        :arrival-time="$this->alert->return->arrivalTime"
+                        :arrival-location="$this->alert->return->arrivalLocation"
+                        :arrival-code="$this->alert->return->arrivalCode"
+                    />
+                @endif
             </div>
         </section>
 

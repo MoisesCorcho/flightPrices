@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\FlightSearch;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -9,38 +10,24 @@ class MyAlerts extends Component
 {
     public function getAlertsProperty()
     {
-        return [
-            (object) [
-                'route_code' => 'MDE → MTR',
-                'route_name' => 'Medellín to Montería',
-                'trend' => 'down',
-                'trend_value' => '-12%',
-                'current_price' => '124',
-                'old_price' => '142',
-                'dates' => 'Oct 12 - Oct 18',
-                'details_url' => route('alerts.show', ['id' => 1]),
-            ],
-            (object) [
-                'route_code' => 'JFK → LHR',
-                'route_name' => 'New York to London',
-                'trend' => 'up',
-                'trend_value' => '+5%',
-                'current_price' => '589',
-                'old_price' => null,
-                'dates' => 'Dec 20 - Dec 27',
-                'details_url' => route('alerts.show', ['id' => 2]),
-            ],
-            (object) [
-                'route_code' => 'CDG → FCO',
-                'route_name' => 'Paris to Rome',
-                'trend' => 'stable',
-                'trend_value' => 'Stable',
-                'current_price' => '82',
-                'old_price' => null,
-                'dates' => 'Nov 04 - Nov 09',
-                'details_url' => route('alerts.show', ['id' => 3]),
-            ],
-        ];
+        return FlightSearch::where('user_id', auth()->id())
+            ->with(['results' => fn ($q) => $q->latest()->limit(1)])
+            ->latest()
+            ->get()
+            ->map(function ($search) {
+                $lastResult = $search->results->first();
+
+                return (object) [
+                    'route_code' => "{$search->origin} → {$search->destination}",
+                    'route_name' => "{$search->origin} to {$search->destination}",
+                    'trend' => 'stable', // Logic to determine trend could be added
+                    'trend_value' => 'Monitoring',
+                    'current_price' => $lastResult?->price ?? 'N/A',
+                    'old_price' => null,
+                    'dates' => $search->date->format('M d, Y'),
+                    'details_url' => route('alerts.show', ['id' => $search->id]),
+                ];
+            });
     }
 
     #[Layout('layouts.pwa')]

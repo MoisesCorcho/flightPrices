@@ -15,9 +15,24 @@ class FlightSearch extends Component
 
     public function search()
     {
+        $this->validate([
+            'origin' => 'required|string|max:10',
+            'destination' => 'required|string|max:10',
+            'date' => 'required|date|after_or_equal:today',
+        ]);
+
+        $search = \App\Models\FlightSearch::create([
+            'user_id' => auth()->id(),
+            'origin' => strtoupper($this->origin),
+            'destination' => strtoupper($this->destination),
+            'date' => $this->date,
+            'is_active' => true,
+        ]);
+
         return redirect()->route('results', [
-            'origin' => $this->origin,
-            'destination' => $this->destination,
+            'search_id' => $search->id,
+            'origin' => strtoupper($this->origin),
+            'destination' => strtoupper($this->destination),
             'date' => $this->date,
         ]);
     }

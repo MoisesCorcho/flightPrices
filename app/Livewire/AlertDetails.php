@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\FlightSearch;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -16,32 +17,28 @@ class AlertDetails extends Component
 
     public function getAlertProperty()
     {
+        $search = FlightSearch::with(['results' => fn ($q) => $q->latest()])
+            ->findOrFail($this->alertId);
+
+        $lastResult = $search->results->first();
+
         return (object) [
-            'route_name' => 'NYC to London',
-            'dates' => 'Round trip • Sep 12 - Sep 19',
-            'price' => '498',
-            'price_drop' => '$142',
-            'status' => 'Cheapest in 30 days',
+            'route_name' => "{$search->origin} to {$search->destination}",
+            'dates' => $search->date->format('M d, Y'),
+            'price' => $lastResult?->price ?? 'N/A',
+            'price_drop' => 'Monitoring',
+            'status' => 'Last checked: '.($lastResult?->created_at?->diffForHumans() ?? 'Never'),
             'outbound' => (object) [
-                'time' => '10:20 PM',
-                'location' => 'New York',
-                'code' => 'JFK',
-                'duration' => '7h 15m',
-                'stops' => 'Non-stop',
-                'arrivalTime' => '10:35 AM',
-                'arrivalLocation' => 'London',
-                'arrivalCode' => 'LHR',
+                'time' => $lastResult?->departure_time ?? 'N/A',
+                'location' => $search->origin,
+                'code' => $search->origin,
+                'duration' => $lastResult?->duration ?? 'N/A',
+                'stops' => $lastResult?->stops ?? 'N/A',
+                'arrivalTime' => $lastResult?->arrival_time ?? 'N/A',
+                'arrivalLocation' => $search->destination,
+                'arrivalCode' => $search->destination,
             ],
-            'return' => (object) [
-                'time' => '2:15 PM',
-                'location' => 'London',
-                'code' => 'LHR',
-                'duration' => '8h 05m',
-                'stops' => 'Non-stop',
-                'arrivalTime' => '5:20 PM',
-                'arrivalLocation' => 'New York',
-                'arrivalCode' => 'JFK',
-            ],
+            'return' => null, // One-way for now as per requirements
         ];
     }
 
