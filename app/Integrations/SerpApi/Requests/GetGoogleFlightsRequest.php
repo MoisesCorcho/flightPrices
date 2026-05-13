@@ -69,6 +69,8 @@ class GetGoogleFlightsRequest extends Request
             arrival_time: $lastFlight['arrival_airport']['time'] ?? 'N/A',
             origin_code: $mainFlight['departure_airport']['id'] ?? 'ORG',
             destination_code: $lastFlight['arrival_airport']['id'] ?? 'DST',
+            origin_name: $mainFlight['departure_airport']['name'] ?? null,
+            destination_name: $lastFlight['arrival_airport']['name'] ?? null,
             duration: (string) ($flightData['total_duration'] ?? 'N/A'),
             stops: count($flightData['flights'] ?? []) > 1
                 ? (count($flightData['flights']) - 1).' stop(s)'

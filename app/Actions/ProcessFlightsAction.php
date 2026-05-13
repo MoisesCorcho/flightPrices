@@ -18,7 +18,10 @@ class ProcessFlightsAction
             // 1. Save historical result
             $result = $search->results()->create([
                 'airline' => $flightDto->airline_name,
+                'flight_number' => $flightDto->flight_number,
                 'airline_logo' => $flightDto->airline_logo,
+                'origin_name' => $flightDto->origin_name,
+                'destination_name' => $flightDto->destination_name,
                 'price' => $flightDto->price,
                 'departure_time' => $flightDto->departure_time,
                 'arrival_time' => $flightDto->arrival_time,

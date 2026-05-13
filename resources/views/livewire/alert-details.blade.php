@@ -25,6 +25,16 @@
                     <p class="font-body-md text-on-surface-variant">
                         {{ $this->alert->dates }}
                     </p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden shrink-0">
+                            @if($this->alert->airline_logo)
+                                <img src="{{ $this->alert->airline_logo }}" alt="{{ $this->alert->airline_name }}" class="w-6 h-6 object-contain">
+                            @else
+                                <span class="material-symbols-outlined text-outline text-xl">flight</span>
+                            @endif
+                        </div>
+                        <span class="font-label-md text-on-surface-variant">{{ $this->alert->airline_name }} • {{ $this->alert->flight_number }}</span>
+                    </div>
                 </div>
                 <div class="text-right">
                     <p class="font-display-price text-primary">

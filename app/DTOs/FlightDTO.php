@@ -17,5 +17,7 @@ readonly class FlightDTO
         public ?string $stops,
         public bool $cheapest = false,
         public string $price_status = 'Price is Low',
+        public ?string $origin_name = null,
+        public ?string $destination_name = null,
     ) {}
 }

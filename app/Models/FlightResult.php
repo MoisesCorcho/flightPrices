@@ -9,7 +9,10 @@ class FlightResult extends Model
     protected $fillable = [
         'flight_search_id',
         'airline',
+        'flight_number',
         'airline_logo',
+        'origin_name',
+        'destination_name',
         'price',
         'departure_time',
         'arrival_time',
