@@ -16,10 +16,10 @@
         
         <select 
             {{ $attributes->merge([
-                'class' => 'bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface appearance-none pr-8 cursor-pointer',
+                'class' => 'bg-transparent border-none focus:ring-0 w-full font-body-md text-on-surface appearance-none pr-8 cursor-pointer dark:bg-zinc-900',
             ]) }}
         >
-            <option value="" disabled selected>{{ $placeholder }}</option>
+            <option value="" disabled selected class="bg-surface-container-low text-on-surface-variant">{{ $placeholder }}</option>
             {{ $slot }}
         </select>
 

@@ -18,7 +18,7 @@
             <div class="relative flex flex-col gap-2">
                 <x-ui.select wire:model="origin" :label="__('From')" icon="flight_takeoff" placeholder="Select Origin City">
                     @foreach($airports as $airport)
-                        <option value="{{ $airport->iata }}">{{ $airport->city }} ({{ $airport->iata }})</option>
+                        <option value="{{ $airport->iata }}" class="bg-surface-container-low text-on-surface">{{ $airport->city }} ({{ $airport->iata }})</option>
                     @endforeach
                 </x-ui.select>
 
@@ -31,7 +31,7 @@
 
                 <x-ui.select wire:model="destination" :label="__('To')" icon="flight_land" placeholder="Select Destination City">
                     @foreach($airports as $airport)
-                        <option value="{{ $airport->iata }}">{{ $airport->city }} ({{ $airport->iata }})</option>
+                        <option value="{{ $airport->iata }}" class="bg-surface-container-low text-on-surface">{{ $airport->city }} ({{ $airport->iata }})</option>
                     @endforeach
                 </x-ui.select>
             </div>

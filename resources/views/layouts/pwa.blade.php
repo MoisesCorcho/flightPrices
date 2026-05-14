@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="dark" lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -22,13 +22,10 @@
 
         <script>
             // Theme initialization
-            const theme = localStorage.getItem('theme') || 'dark';
-            if (theme === 'dark') {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
-                document.documentElement.classList.remove('light');
             } else {
                 document.documentElement.classList.remove('dark');
-                document.documentElement.classList.add('light');
             }
 
             if ('serviceWorker' in navigator) {
