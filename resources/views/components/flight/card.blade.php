@@ -58,7 +58,7 @@
     </div>
 @else
     <!-- Alert Card -->
-    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] flex flex-col gap-4 border border-outline-variant/10">
+    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_10px_30px_rgba(0,0,0,0.04)] flex flex-col gap-4 border border-outline-variant/30 hover:border-primary/30 transition-colors duration-200">
         <div class="flex justify-between items-start">
             <div class="flex flex-col">
                 <span class="font-label-sm text-on-surface-variant mb-1">{{ $flight?->route_code ?? 'ORG → DST' }}</span>
@@ -66,22 +66,25 @@
             </div>
             
             @php
-                $trendColor = match($flight?->trend ?? 'stable') {
+                $trend = $flight?->trend ?? 'stable';
+                $trendColor = match($trend) {
                     'down' => 'bg-tertiary-fixed text-on-tertiary-fixed',
                     'up' => 'bg-error-container text-on-error-container',
-                    default => 'bg-surface-container-high text-on-surface-variant',
+                    default => 'hidden',
                 };
-                $trendIcon = match($flight?->trend ?? 'stable') {
+                $trendIcon = match($trend) {
                     'down' => 'trending_down',
                     'up' => 'trending_up',
-                    default => 'horizontal_rule',
+                    default => '',
                 };
             @endphp
 
-            <div class="{{ $trendColor }} px-3 py-1 rounded-full flex items-center gap-1">
-                <span class="material-symbols-outlined text-[18px]">{{ $trendIcon }}</span>
-                <span class="font-label-sm">{{ $flight?->trend_value ?? 'Stable' }}</span>
-            </div>
+            @if($trend !== 'stable')
+                <div class="{{ $trendColor }} px-3 py-1 rounded-full flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[18px]">{{ $trendIcon }}</span>
+                    <span class="font-label-sm">{{ $flight?->trend_value ?? 'Stable' }}</span>
+                </div>
+            @endif
         </div>
 
         <div class="flex items-baseline gap-2">

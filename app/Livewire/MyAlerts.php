@@ -21,7 +21,7 @@ class MyAlerts extends Component
                     'route_code' => "{$search->origin} → {$search->destination}",
                     'route_name' => "{$search->origin} to {$search->destination}",
                     'trend' => 'stable', // Logic to determine trend could be added
-                    'trend_value' => 'Monitoring',
+                    'trend_value' => 'Stable',
                     'current_price' => $lastResult?->price ?? 'N/A',
                     'old_price' => null,
                     'dates' => $search->date->format('M d, Y'),

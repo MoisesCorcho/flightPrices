@@ -1,13 +1,5 @@
 <div class="bg-background text-on-surface min-h-screen flex flex-col">
     <x-ui.top-app-bar title="Alert Details" show-back back-url="{{ route('alerts.index') }}">
-        <x-slot:actions>
-            <button class="active:scale-95 transition-transform duration-150 text-on-surface-variant p-2 hover:opacity-80 transition-opacity">
-                <span class="material-symbols-outlined">share</span>
-            </button>
-            <button class="active:scale-95 transition-transform duration-150 text-on-surface-variant p-2 hover:opacity-80 transition-opacity">
-                <span class="material-symbols-outlined">more_vert</span>
-            </button>
-        </x-slot:actions>
     </x-ui.top-app-bar>
 
     <main class="flex-1 mt-16 pb-24 max-w-max-width mx-auto w-full px-container-padding-mobile pt-6">
@@ -48,8 +40,8 @@
 
             <!-- Route Details -->
             <div class="space-y-6">
-                <x-flight.route-detail 
-                    type="outbound" 
+                <x-flight.route-detail
+                    type="outbound"
                     :time="$this->alert->outbound->time"
                     :location="$this->alert->outbound->location"
                     :code="$this->alert->outbound->code"
@@ -59,10 +51,10 @@
                     :arrival-location="$this->alert->outbound->arrivalLocation"
                     :arrival-code="$this->alert->outbound->arrivalCode"
                 />
-                
+
                 @if($this->alert->return)
-                    <x-flight.route-detail 
-                        type="return" 
+                    <x-flight.route-detail
+                        type="return"
                         :time="$this->alert->return->time"
                         :location="$this->alert->return->location"
                         :code="$this->alert->return->code"
