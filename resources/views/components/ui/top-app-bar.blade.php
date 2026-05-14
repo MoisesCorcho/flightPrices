@@ -1,4 +1,29 @@
-<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl shadow-sm border-b border-outline-variant/20">
+@props([
+    'title' => '',
+    'subtitle' => null,
+    'showBack' => false,
+    'backUrl' => '#',
+    'actions' => null,
+])
+
+<header 
+    x-data="{ 
+        isDark: document.documentElement.classList.contains('dark'),
+        toggle() {
+            this.isDark = !this.isDark;
+            if (this.isDark) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+    }"
+    class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface-container/80 backdrop-blur-xl shadow-sm border-b border-outline-variant/20"
+>
     <div class="flex items-center justify-between px-container-padding-mobile h-16 w-full max-w-max-width mx-auto">
         <div class="flex items-center gap-4">
             @if($showBack)
@@ -31,21 +56,25 @@
             
             <!-- Language Switcher -->
             <flux:dropdown position="bottom" align="end">
-                <flux:button variant="subtle" icon="language" class="hidden sm:flex" />
+                <flux:button variant="subtle" icon="language" class="flex" />
                 <flux:menu>
-                    <flux:menu.item :href="route('language.switch', 'es')">{{ __('Spanish') }}</flux:menu.item>
-                    <flux:menu.item :href="route('language.switch', 'en')">{{ __('English') }}</flux:menu.item>
+                    <flux:menu.item :href="route('language.switch', 'es')" icon="check" :active="app()->getLocale() === 'es'">{{ __('Spanish') }}</flux:menu.item>
+                    <flux:menu.item :href="route('language.switch', 'en')" icon="check" :active="app()->getLocale() === 'en'">{{ __('English') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
 
             <!-- Theme Toggle -->
             <button 
-                onclick="toggleTheme()"
-                class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors"
+                @click="toggle()"
+                class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-colors flex items-center justify-center w-10 h-10"
                 aria-label="{{ __('Toggle Theme') }}"
             >
-                <span class="material-symbols-outlined dark:hidden">dark_mode</span>
-                <span class="material-symbols-outlined hidden dark:block">light_mode</span>
+                <template x-if="isDark">
+                    <span class="material-symbols-outlined">light_mode</span>
+                </template>
+                <template x-if="!isDark">
+                    <span class="material-symbols-outlined">dark_mode</span>
+                </template>
             </button>
 
             <!-- User Menu -->
@@ -66,9 +95,6 @@
                             <flux:menu.item :href="route('dashboard')" icon="home" wire:navigate>{{ __('Dashboard') }}</flux:menu.item>
                             <flux:menu.item :href="route('profile.edit')" icon="user" wire:navigate>{{ __('Profile') }}</flux:menu.item>
                             <flux:menu.separator />
-                            <flux:menu.item :href="route('language.switch', 'es')">{{ __('Spanish') }}</flux:menu.item>
-                            <flux:menu.item :href="route('language.switch', 'en')">{{ __('English') }}</flux:menu.item>
-                            <flux:menu.separator />
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle">{{ __('Log out') }}</flux:menu.item>
@@ -80,18 +106,3 @@
         </div>
     </div>
 </header>
-
-<script>
-    function toggleTheme() {
-        const isDark = document.documentElement.classList.contains('dark');
-        if (isDark) {
-            document.documentElement.classList.remove('dark');
-            document.documentElement.classList.add('light');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.documentElement.classList.add('dark');
-            document.documentElement.classList.remove('light');
-            localStorage.setItem('theme', 'dark');
-        }
-    }
-</script>
