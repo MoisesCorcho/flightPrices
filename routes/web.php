@@ -14,6 +14,7 @@ Route::get('/search', FlightSearch::class)->name('search');
 Route::get('/results', FlightResults::class)->name('results');
 Route::get('/alerts', MyAlerts::class)->name('alerts.index');
 Route::get('/alerts/{id}', AlertDetails::class)->name('alerts.show');
+Route::get('/lang/{locale}', [\App\Http\Controllers\LanguageController::class, 'switch'])->name('language.switch');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

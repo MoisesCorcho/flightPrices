@@ -23,14 +23,14 @@
                     @endif
                 </div>
                 <div>
-                    <h3 class="font-headline-md">{{ $flight?->airline_name ?? 'Airline' }}</h3>
-                    <p class="font-label-sm text-on-surface-variant">{{ $flight?->flight_number ?? 'Flight' }}</p>
+                    <h3 class="font-headline-md">{{ $flight?->airline_name ?? __('Airline') }}</h3>
+                    <p class="font-label-sm text-on-surface-variant">{{ $flight?->flight_number ?? __('Flight') }}</p>
                 </div>
             </div>
             <div class="text-right">
                 <span class="font-display-price text-primary">${{ $flight?->price ?? '0' }}</span>
                 <p class="font-label-sm text-tertiary font-bold">
-                    {{ $flight?->price_status ?? 'Price is Low' }}
+                    {{ __($flight?->price_status ?? 'Price is Low') }}
                 </p>
             </div>
         </div>
@@ -46,7 +46,7 @@
                     <div class="w-2 h-2 rounded-full bg-outline absolute left-0"></div>
                     <div class="w-2 h-2 rounded-full bg-outline absolute right-0"></div>
                 </div>
-                <p class="font-label-sm text-on-surface-variant mt-1">{{ $flight?->stops ?? 'Non-stop' }}</p>
+                <p class="font-label-sm text-on-surface-variant mt-1">{{ __($flight?->stops ?? 'Non-stop') }}</p>
             </div>
             <div class="text-right flex-1">
                 <p class="font-headline-md">{{ $flight?->arrival_time ?? '00:00' }}</p>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <x-ui.button>View Deal</x-ui.button>
+        <x-ui.button>{{ __('View Deal') }}</x-ui.button>
     </div>
 @else
     <!-- Alert Card -->
@@ -99,10 +99,10 @@
         <div class="flex items-center justify-between mt-2 pt-4 border-t border-surface-variant">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-on-surface-variant">calendar_month</span>
-                <span class="font-label-md text-on-surface-variant">{{ $flight?->dates ?? 'Date Range' }}</span>
+                <span class="font-label-md text-on-surface-variant">{{ $flight?->dates }}</span>
             </div>
-            <a href="{{ $flight?->details_url ?? '#' }}" class="text-primary font-label-md hover:underline">
-                Details
+            <a href="{{ $flight?->details_url ?? '#' }}" class="text-primary dark:text-primary-fixed font-label-md hover:underline">
+                {{ __('Details') }}
             </a>
         </div>
     </div>

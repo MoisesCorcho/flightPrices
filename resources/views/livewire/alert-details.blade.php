@@ -71,11 +71,11 @@
         <!-- Action Buttons -->
         <div class="flex flex-col gap-3 mt-8">
             <x-ui.button>
-                View on Airline Website
+                {{ __('View on Airline Website') }}
                 <span class="material-symbols-outlined">open_in_new</span>
             </x-ui.button>
             <x-ui.button variant="secondary">
-                Delete Alert
+                {{ __('Delete Alert') }}
                 <span class="material-symbols-outlined">delete</span>
             </x-ui.button>
         </div>

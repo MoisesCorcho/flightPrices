@@ -30,6 +30,7 @@ class AlertDetails extends Component
             'airline_logo' => $lastResult?->airline_logo ?? null,
             'flight_number' => $lastResult?->flight_number ?? 'N/A',
             'price_drop' => 'Monitoring',
+            'status_time' => $lastResult?->created_at?->diffForHumans(),
             'status' => 'Last checked: '.($lastResult?->created_at?->diffForHumans() ?? 'Never'),
             'outbound' => (object) [
                 'time' => $lastResult?->departure_time ?? 'N/A',

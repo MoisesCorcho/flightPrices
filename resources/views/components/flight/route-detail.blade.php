@@ -23,7 +23,7 @@
             'font-label-sm uppercase tracking-wider',
             'text-primary' => $type === 'outbound',
             'text-on-surface-variant' => $type === 'return',
-        ])>{{ ucfirst($type) }}</span>
+        ])>{{ __($type === 'outbound' ? 'Outbound' : 'Return') }}</span>
         <span class="font-label-sm text-on-surface-variant">{{ $duration }}</span>
     </div>
 
@@ -38,7 +38,7 @@
                 {{ $type === 'outbound' ? 'flight_takeoff' : 'flight_land' }}
             </span>
             <div class="h-[2px] w-12 bg-outline-variant my-1"></div>
-            <p class="text-[10px] font-bold text-outline uppercase">{{ $stops }}</p>
+            <p class="text-[10px] font-bold text-outline uppercase">{{ __($stops) }}</p>
         </div>
 
         <div class="text-right">
