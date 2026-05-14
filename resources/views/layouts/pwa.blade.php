@@ -45,6 +45,9 @@
     <body class="bg-background text-on-surface min-h-screen flex flex-col font-sans">
         {{ $slot }}
 
+        @persist('flux')
+            @fluxScripts
+        @endpersist
         @livewireScripts
     </body>
 </html>
