@@ -33,8 +33,8 @@
             <flux:dropdown position="bottom" align="end">
                 <flux:button variant="subtle" icon="language" class="hidden sm:flex" />
                 <flux:menu>
-                    <flux:menu.item :href="route('language.switch', 'es')" :variant="app()->getLocale() === 'es' ? 'bullet' : 'subtle'">{{ __('Spanish') }}</flux:menu.item>
-                    <flux:menu.item :href="route('language.switch', 'en')" :variant="app()->getLocale() === 'en' ? 'bullet' : 'subtle'">{{ __('English') }}</flux:menu.item>
+                    <flux:menu.item :href="route('language.switch', 'es')">{{ __('Spanish') }}</flux:menu.item>
+                    <flux:menu.item :href="route('language.switch', 'en')">{{ __('English') }}</flux:menu.item>
                 </flux:menu>
             </flux:dropdown>
 
