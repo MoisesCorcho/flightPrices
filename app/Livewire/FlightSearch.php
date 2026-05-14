@@ -5,6 +5,8 @@ namespace App\Livewire;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
+use App\Models\Airport;
+
 class FlightSearch extends Component
 {
     public $origin = '';
@@ -13,11 +15,18 @@ class FlightSearch extends Component
 
     public $date = '';
 
+    public function swap()
+    {
+        $temp = $this->origin;
+        $this->origin = $this->destination;
+        $this->destination = $temp;
+    }
+
     public function search()
     {
         $this->validate([
-            'origin' => 'required|string|max:10',
-            'destination' => 'required|string|max:10',
+            'origin' => 'required|string|size:3',
+            'destination' => 'required|string|size:3',
             'date' => 'required|date|after_or_equal:today',
         ]);
 
@@ -40,6 +49,10 @@ class FlightSearch extends Component
     #[Layout('layouts.pwa')]
     public function render()
     {
-        return view('livewire.flight-search');
+        $airports = Airport::orderBy('city')->get();
+
+        return view('livewire.flight-search', [
+            'airports' => $airports,
+        ]);
     }
 }

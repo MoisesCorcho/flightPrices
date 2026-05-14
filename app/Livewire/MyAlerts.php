@@ -10,7 +10,7 @@ class MyAlerts extends Component
 {
     public function getAlertsProperty()
     {
-        return FlightSearch::where('user_id', auth()->id())
+        return FlightSearch::query()
             ->with(['results' => fn ($q) => $q->latest()->limit(1)])
             ->latest()
             ->get()
