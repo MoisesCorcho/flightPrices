@@ -21,13 +21,32 @@
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
         <script>
-            // Theme initialization
-            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
+            /**
+             * Theme initialization based on user preference or system settings.
+             * This function is defined globally to be reused during navigation events.
+             */
+            function initializeTheme() {
+                const theme = localStorage.getItem('theme');
+                const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
             }
 
+            // Initial call
+            initializeTheme();
+
+            /**
+             * Re-initialize theme when Livewire finishes a navigation event (wire:navigate).
+             */
+            document.addEventListener('livewire:navigated', initializeTheme);
+
+            /**
+             * Register the Service Worker for PWA functionality.
+             */
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/sw.js');
@@ -40,7 +59,9 @@
         <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging-compat.js"></script>
 
         <script>
-            // 2. INICIALIZAR FIREBASE CON DATOS EXACTOS
+            /**
+             * Firebase project configuration.
+             */
             const firebaseConfig = {
                 apiKey: "AIzaSyCl4f71qHNjH5v3ny4dDS7GmPAemRi6hAU",
                 authDomain: "flightprices-4dfbf.firebaseapp.com",
@@ -50,19 +71,25 @@
                 appId: "1:298414671888:web:5beca7b05e92dc54f62295",
                 measurementId: "G-B71QW442WB"
             };
+
+            /**
+             * Initialize Firebase App and Messaging.
+             */
             firebase.initializeApp(firebaseConfig);
             const messaging = firebase.messaging();
 
-            // 3. SOLICITAR PERMISOS Y OBTENER TOKEN
+            /**
+             * Request notification permission and retrieve FCM token.
+             */
             function requestPermission() {
                 console.log('Solicitando permiso para notificaciones...');
                 Notification.requestPermission().then((permission) => {
                     if (permission === 'granted') {
                         console.log('Permiso concedido.');
 
-                        // Obtenemos el registro del Service Worker actual
+                        // Wait for service worker to be ready before requesting the token.
                         navigator.serviceWorker.ready.then((registration) => {
-                            // Obtener el token de registro de FCM
+                            // Get FCM registration token using the VAPID key.
                             messaging.getToken({ 
                                 vapidKey: 'BHQK5n-2nCUSozb2nLLbecQI2t1UE-7gPieh4cd1EN5aaTi57ymF6i1f3yJSl7GM-HNzaLlzRQ9xlo1Z5dOxqU4', 
                                 serviceWorkerRegistration: registration 
@@ -82,6 +109,11 @@
                     }
                 });
             }
+
+            /**
+             * Send the FCM token to the server for persistent storage.
+             * @param {string} token
+             */
             function sendTokenToServer(token) {
                 fetch('/fcm-token', {
                     method: 'POST',
@@ -96,9 +128,10 @@
                 .catch(error => console.error('Error al guardar el token:', error));
             }
 
-            // Iniciar el proceso de solicitud de permiso
+            /**
+             * Initiate permission request process after page load.
+             */
             window.addEventListener('load', () => {
-                // Pequeño delay para no interrumpir la carga inicial
                 setTimeout(requestPermission, 2000);
             });
         </script>
@@ -107,7 +140,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
     </head>
-    <body class="bg-background text-on-surface min-h-screen flex flex-col font-sans">
+    <body class="bg-surface text-on-surface min-h-screen flex flex-col font-sans">
         {{ $slot }}
 
         @persist('flux')

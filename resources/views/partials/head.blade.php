@@ -12,12 +12,22 @@
 @fonts
 
 <script>
-    // Theme initialization
-    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.classList.add('dark');
-    } else {
-        document.documentElement.classList.remove('dark');
+    /**
+     * Theme initialization based on user preference or system settings.
+     */
+    function initializeTheme() {
+        const theme = localStorage.getItem('theme');
+        const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
     }
+
+    initializeTheme();
+    document.addEventListener('livewire:navigated', initializeTheme);
 </script>
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
