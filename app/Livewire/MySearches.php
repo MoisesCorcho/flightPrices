@@ -15,11 +15,11 @@ class MySearches extends Component
 
     public function toggleActive($searchId)
     {
-        $search = FlightSearch::query()->findOrFail($searchId);
+        $search = FlightSearch::where('user_id', Auth::id())->findOrFail($searchId);
 
         if (! $search->is_active) {
             // Deactivate all others first
-            FlightSearch::query()
+            FlightSearch::where('user_id', Auth::id())
                 ->where('id', '!=', $searchId)
                 ->update(['is_active' => false]);
 
