@@ -16,6 +16,19 @@
         </a>
 
         <a
+            href="{{ route('searches.index') }}"
+            @class([
+                'flex flex-col items-center justify-center transition-all duration-200 active:scale-90 px-4 py-1 rounded-full',
+                'text-primary dark:text-primary-fixed font-bold bg-primary-fixed dark:bg-primary-container' => $active === 'searches',
+                'text-on-surface-variant hover:bg-surface-container-high' => $active !== 'searches',
+            ])
+            wire:navigate
+        >
+            <span @class(['material-symbols-outlined', 'fill-1' => $active === 'searches'])>list_alt</span>
+            <span class="font-label-sm">{{ __('Searches') }}</span>
+        </a>
+
+        <a
             href="{{ route('alerts.index') }}"
             @class([
                 'flex flex-col items-center justify-center transition-all duration-200 active:scale-90 px-4 py-1 rounded-full',

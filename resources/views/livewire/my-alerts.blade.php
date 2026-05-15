@@ -8,9 +8,6 @@
             <h2 class="font-headline-lg text-on-surface mb-2">
                 {{ __('My Alerts') }}
             </h2>
-            <p class="font-body-md text-on-surface-variant">
-                {{ __('Tracking :count active flight routes for price drops.', ['count' => count($this->alerts)]) }}
-            </p>
         </div>
 
         <!-- Alerts Grid -->

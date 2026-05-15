@@ -12,7 +12,7 @@
                 Cheapest
             </div>
         @endif
-        
+
         <div class="flex justify-between items-start mb-6 pt-2">
             <div class="flex items-center gap-3">
                 <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center overflow-hidden">
@@ -53,8 +53,6 @@
                 <p class="font-label-sm text-on-surface-variant">{{ $flight?->destination_code ?? 'DST' }}</p>
             </div>
         </div>
-
-        <x-ui.button>{{ __('View Deal') }}</x-ui.button>
     </div>
 @else
     <!-- Alert Card -->
@@ -64,7 +62,7 @@
                 <span class="font-label-sm text-on-surface-variant mb-1">{{ $flight?->route_code ?? 'ORG → DST' }}</span>
                 <h3 class="font-headline-md text-on-surface">{{ $flight?->route_name ?? 'Route Name' }}</h3>
             </div>
-            
+
             @php
                 $trend = $flight?->trend ?? 'stable';
                 $trendColor = match($trend) {
