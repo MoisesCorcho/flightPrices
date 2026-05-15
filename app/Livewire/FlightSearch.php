@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Airport;
+use App\Models\User;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -29,11 +30,11 @@ class FlightSearch extends Component
             'date' => 'required|date|after_or_equal:today',
         ]);
 
-        // Deactivate all previous searches for this user
+        // Deactivate all previous searches
         \App\Models\FlightSearch::query()->update(['is_active' => false]);
 
         $search = \App\Models\FlightSearch::create([
-            'user_id' => auth()->id(),
+            'user_id' => User::first()?->id ?? 1,
             'origin' => strtoupper($this->origin),
             'destination' => strtoupper($this->destination),
             'date' => $this->date,

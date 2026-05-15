@@ -19,6 +19,18 @@ Route::get('/alerts', MyAlerts::class)->name('alerts.index');
 Route::get('/alerts/{id}', AlertDetails::class)->name('alerts.show');
 Route::get('/lang/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
 
+Route::post('/fcm-token', function (\Illuminate\Http\Request $request) {
+    $token = $request->input('token');
+    $user = \App\Models\User::first(); // Single user system
+
+    if ($user && $token) {
+        $user->deviceTokens()->updateOrCreate(['token' => $token]);
+        return response()->json(['message' => 'Token saved successfully']);
+    }
+
+    return response()->json(['message' => 'User or token not found'], 404);
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });

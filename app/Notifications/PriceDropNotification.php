@@ -18,16 +18,16 @@ class PriceDropNotification extends Notification
 
     public function via($notifiable): array
     {
-        return [FcmChannel::class, 'database'];
+        return [FcmChannel::class];
     }
 
     public function toFcm($notifiable): FcmMessage
     {
         return FcmMessage::create()
-            ->setNotification(FcmNotification::create()
-                ->setTitle('¡Baja de precio detectada!')
-                ->setBody("Vuelo de {$this->flightNotification->origin} a {$this->flightNotification->destination} por \${$this->flightNotification->price}"))
-            ->setData([
+            ->notification(FcmNotification::create()
+                ->title('¡Baja de precio detectada!')
+                ->body("Vuelo de {$this->flightNotification->origin} a {$this->flightNotification->destination} por \${$this->flightNotification->price}"))
+            ->data([
                 'url' => route('alerts.show', ['id' => $this->flightNotification->id]),
             ]);
     }
