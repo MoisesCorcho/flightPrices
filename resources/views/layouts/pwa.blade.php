@@ -28,7 +28,7 @@
             function initializeTheme() {
                 const theme = localStorage.getItem('theme');
                 const isDark = theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches);
-                
+
                 if (isDark) {
                     document.documentElement.classList.add('dark');
                 } else {
@@ -63,13 +63,13 @@
              * Firebase project configuration.
              */
             const firebaseConfig = {
-                apiKey: "AIzaSyCl4f71qHNjH5v3ny4dDS7GmPAemRi6hAU",
-                authDomain: "flightprices-4dfbf.firebaseapp.com",
-                projectId: "flightprices-4dfbf",
-                storageBucket: "flightprices-4dfbf.firebasestorage.app",
-                messagingSenderId: "298414671888",
-                appId: "1:298414671888:web:5beca7b05e92dc54f62295",
-                measurementId: "G-B71QW442WB"
+                apiKey: "{{ config('services.firebase.api_key') }}",
+                authDomain: "{{ config('services.firebase.auth_domain') }}",
+                projectId: "{{ config('services.firebase.project_id') }}",
+                storageBucket: "{{ config('services.firebase.storage_bucket') }}",
+                messagingSenderId: "{{ config('services.firebase.messaging_sender_id') }}",
+                appId: "{{ config('services.firebase.app_id') }}",
+                measurement_id: "{{ config('services.firebase.measurement_id') }}"
             };
 
             /**
@@ -90,9 +90,9 @@
                         // Wait for service worker to be ready before requesting the token.
                         navigator.serviceWorker.ready.then((registration) => {
                             // Get FCM registration token using the VAPID key.
-                            messaging.getToken({ 
-                                vapidKey: 'BHQK5n-2nCUSozb2nLLbecQI2t1UE-7gPieh4cd1EN5aaTi57ymF6i1f3yJSl7GM-HNzaLlzRQ9xlo1Z5dOxqU4', 
-                                serviceWorkerRegistration: registration 
+                            messaging.getToken({
+                                vapidKey: '{{ config('services.firebase.vapid_key') }}',
+                                serviceWorkerRegistration: registration
                             }).then((currentToken) => {
                                 if (currentToken) {
                                     console.log('Token FCM:', currentToken);
