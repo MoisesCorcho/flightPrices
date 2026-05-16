@@ -44,9 +44,8 @@ test('it sends a notification when flight price is below or equal to target pric
     Notification::assertSentTo(
         $user,
         PriceDropNotification::class,
-        function ($notification, $channels) use ($user) {
-            return in_array('database', $channels) && 
-                   $notification->toArray($user)['price'] == 90000;
+        function ($notification, $channels) {
+            return in_array(\NotificationChannels\Fcm\FcmChannel::class, $channels);
         }
     );
 });

@@ -12,7 +12,8 @@ Route::get('/', function () {
     return redirect()->route('search');
 });
 
-Route::get('/search', FlightSearch::class)->name('search');
+Route::get('/search', FlightSearch::class)->name('home');
+Route::get('/search-alias', function() { return redirect()->route('home'); })->name('search');
 Route::get('/results', FlightResults::class)->name('results');
 Route::get('/searches', MySearches::class)->name('searches.index');
 Route::get('/alerts', MyAlerts::class)->name('alerts.index');
