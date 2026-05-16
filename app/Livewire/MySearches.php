@@ -54,6 +54,11 @@ class MySearches extends Component
         $this->newTargetPrice = '';
     }
 
+    public function deleteSearch($searchId)
+    {
+        FlightSearch::findOrFail($searchId)->delete();
+    }
+
     #[Layout('layouts.pwa')]
     public function render()
     {

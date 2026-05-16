@@ -24,7 +24,7 @@
                             <div class="flex flex-col items-center">
                                 <span class="font-headline-sm text-on-surface leading-none">{{ $search->origin }}</span>
                             </div>
-                            
+
                             <div class="flex items-center px-2">
                                 <div class="h-[2px] w-6 bg-outline-variant/50 relative">
                                     <span class="material-symbols-outlined text-primary text-[16px] absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-container-lowest rounded-full p-0.5">flight_takeoff</span>
@@ -35,36 +35,46 @@
                                 <span class="font-headline-sm text-on-surface leading-none">{{ $search->destination }}</span>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center gap-2 text-on-surface-variant">
                             <span class="material-symbols-outlined text-[18px] opacity-70">calendar_month</span>
                             <span class="font-title-small">{{ $search->date->format('M d, Y') }}</span>
                         </div>
-                    </div>
+                        </div>
 
-                    <button 
-                        wire:click="toggleActive({{ $search->id }})"
-                        @class([
-                            'flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm',
-                            'bg-primary text-on-primary ring-2 ring-primary/20' => $search->is_active,
-                            'bg-surface-container-highest text-on-surface-variant' => !$search->is_active,
-                        ])
-                    >
-                        <span @class(['material-symbols-outlined text-[16px]', 'fill-1' => $search->is_active])>
-                            {{ $search->is_active ? 'notifications_active' : 'notifications_off' }}
-                        </span>
-                        {{ $search->is_active ? __('Active') : __('Inactive') }}
-                    </button>
-                </div>
+                        <div class="flex flex-col items-end gap-2">
+                        <button 
+                            wire:click="toggleActive({{ $search->id }})"
+                            @class([
+                                'flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-sm',
+                                'bg-primary text-on-primary ring-2 ring-primary/20' => $search->is_active,
+                                'bg-surface-container-highest text-on-surface-variant' => !$search->is_active,
+                            ])
+                        >
+                            <span @class(['material-symbols-outlined text-[16px]', 'fill-1' => $search->is_active])>
+                                {{ $search->is_active ? 'notifications_active' : 'notifications_off' }}
+                            </span>
+                            {{ $search->is_active ? __('Active') : __('Inactive') }}
+                        </button>
 
+                        <button 
+                            wire:click="deleteSearch({{ $search->id }})"
+                            wire:confirm="{{ __('Are you sure you want to delete this search?') }}"
+                            class="p-2 text-on-surface-variant/40 hover:text-error hover:bg-error/10 rounded-full transition-all"
+                            title="{{ __('Delete Search') }}"
+                        >
+                            <span class="material-symbols-outlined text-[20px]">delete</span>
+                        </button>
+                        </div>
+                        </div>
                 <div class="flex items-center justify-between pt-4 border-t border-outline-variant/20">
                     <div class="flex flex-col">
                         <span class="font-label-sm text-on-surface-variant mb-0.5">{{ __('Target Price') }}</span>
                         @if($editingId === $search->id)
                             <div class="flex items-center gap-2">
-                                <input 
-                                    type="number" 
-                                    wire:model="newTargetPrice" 
+                                <input
+                                    type="number"
+                                    wire:model="newTargetPrice"
                                     class="w-24 h-9 bg-surface-container-low border border-primary rounded-lg px-2 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
                                     step="0.01"
                                     autofocus
@@ -88,10 +98,10 @@
                         @endif
                     </div>
 
-                    <a href="{{ route('results', ['search_id' => $search->id, 'origin' => $search->origin, 'destination' => $search->destination, 'date' => $search->date->format('Y-m-d')]) }}" wire:navigate class="flex items-center gap-1.5 px-4 py-2 bg-primary/10 text-primary rounded-xl font-label-lg active:scale-95 transition-all">
+                    {{-- <a href="{{ route('results', ['search_id' => $search->id, 'origin' => $search->origin, 'destination' => $search->destination, 'date' => $search->date->format('Y-m-d')]) }}" wire:navigate class="flex items-center gap-1.5 px-4 py-2 bg-primary/10 text-primary rounded-xl font-label-lg active:scale-95 transition-all">
                         {{ __('Results') }}
                         <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </a>
+                    </a> --}}
                 </div>
             </div>
         @empty
