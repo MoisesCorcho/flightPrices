@@ -18,8 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call(AirportSeeder::class);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@admin.com',
+            'password' => env('ADMIN_PASSWORD', 'password'),
         ]);
     }
 }
