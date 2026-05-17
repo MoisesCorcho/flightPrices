@@ -15,7 +15,7 @@ class AirportSeeder extends Seeder
      */
     public function run(): void
     {
-        $filePath = base_path('storage/app/airports.txt');
+        $filePath = database_path('data/airports.txt');
         
         if (!file_exists($filePath)) {
             $this->command->error("File not found: {$filePath}");
