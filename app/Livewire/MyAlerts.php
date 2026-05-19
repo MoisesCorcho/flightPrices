@@ -11,7 +11,7 @@ class MyAlerts extends Component
     public function getAlertsProperty()
     {
         return FlightSearch::query()
-            ->with(['results' => fn ($q) => $q->latest()->limit(1)])
+            ->with(['results' => fn ($q) => $q->orderBy('price', 'asc')->limit(1)])
             ->latest()
             ->get()
             ->map(function ($search) {

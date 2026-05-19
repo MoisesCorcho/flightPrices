@@ -17,7 +17,7 @@ class AlertDetails extends Component
 
     public function getAlertProperty()
     {
-        $search = FlightSearch::with(['results' => fn ($q) => $q->latest()])
+        $search = FlightSearch::with(['results' => fn ($q) => $q->orderBy('price', 'asc')->limit(1)])
             ->findOrFail($this->alertId);
 
         $lastResult = $search->results->first();
