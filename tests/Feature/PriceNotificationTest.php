@@ -5,9 +5,11 @@ use App\DTOs\FlightDTO;
 use App\Models\FlightSearch;
 use App\Models\User;
 use App\Notifications\PriceDropNotification;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use NotificationChannels\Fcm\FcmChannel;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 test('it sends a notification when flight price is below or equal to target price', function () {
     Notification::fake();
@@ -45,7 +47,7 @@ test('it sends a notification when flight price is below or equal to target pric
         $user,
         PriceDropNotification::class,
         function ($notification, $channels) {
-            return in_array(\NotificationChannels\Fcm\FcmChannel::class, $channels);
+            return in_array(FcmChannel::class, $channels);
         }
     );
 });

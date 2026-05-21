@@ -5,7 +5,6 @@ namespace App\Livewire;
 use App\Actions\FetchFlightsAction;
 use App\Actions\ProcessFlightsAction;
 use App\DTOs\SearchCriteriaDTO;
-use App\Models\FlightSearch;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -42,7 +41,7 @@ class FlightResults extends Component
 
             // Persist results if we have a search_id
             if ($this->search_id) {
-                $search = FlightSearch::find($this->search_id);
+                $search = auth()->user()->searches()->find($this->search_id);
                 if ($search) {
                     $processAction->execute($search, $flights);
                 }
@@ -52,7 +51,7 @@ class FlightResults extends Component
         } catch (\Exception $e) {
             session()->flash('error', 'Error fetching flights: '.$e->getMessage());
 
-            return [];
+            return collect([]);
         }
     }
 

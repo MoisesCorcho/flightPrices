@@ -2,11 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-
 use App\Models\Airport;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Seeder;
 
 class AirportSeeder extends Seeder
 {
@@ -16,9 +13,10 @@ class AirportSeeder extends Seeder
     public function run(): void
     {
         $filePath = database_path('data/airports.txt');
-        
-        if (!file_exists($filePath)) {
+
+        if (! file_exists($filePath)) {
             $this->command->error("File not found: {$filePath}");
+
             return;
         }
 

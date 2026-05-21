@@ -2,11 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\FlightSearch;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FlightSearch>
+ * @extends Factory<FlightSearch>
  */
 class FlightSearchFactory extends Factory
 {

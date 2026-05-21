@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\FlightSearch;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -14,11 +13,13 @@ class MySearches extends Component
 
     public function toggleActive($searchId)
     {
-        $search = FlightSearch::findOrFail($searchId);
+        $user = auth()->user();
+        $search = $user->searches()->findOrFail($searchId);
 
         if (! $search->is_active) {
-            // Deactivate all others first (single user system)
-            FlightSearch::where('id', '!=', $searchId)
+            // Deactivate all others first for this user
+            $user->searches()
+                ->where('id', '!=', $searchId)
                 ->update(['is_active' => false]);
 
             $search->update(['is_active' => true]);
@@ -31,7 +32,7 @@ class MySearches extends Component
     public function editTargetPrice($searchId)
     {
         $this->editingId = $searchId;
-        $search = FlightSearch::findOrFail($searchId);
+        $search = auth()->user()->searches()->findOrFail($searchId);
         $this->newTargetPrice = $search->target_price;
     }
 
@@ -41,7 +42,8 @@ class MySearches extends Component
             'newTargetPrice' => 'required|numeric|min:0',
         ]);
 
-        FlightSearch::where('id', $this->editingId)
+        auth()->user()->searches()
+            ->where('id', $this->editingId)
             ->update(['target_price' => $this->newTargetPrice]);
 
         $this->editingId = null;
@@ -56,13 +58,14 @@ class MySearches extends Component
 
     public function deleteSearch($searchId)
     {
-        FlightSearch::findOrFail($searchId)->delete();
+        auth()->user()->searches()->findOrFail($searchId)->delete();
     }
 
     #[Layout('layouts.pwa')]
     public function render()
     {
-        $searches = FlightSearch::latest()
+        $searches = auth()->user()->searches()
+            ->latest()
             ->get();
 
         return view('livewire.my-searches', [

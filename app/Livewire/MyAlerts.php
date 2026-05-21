@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\FlightSearch;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -10,7 +9,7 @@ class MyAlerts extends Component
 {
     public function getAlertsProperty()
     {
-        return FlightSearch::query()
+        return auth()->user()->searches()
             ->with(['results' => fn ($q) => $q->orderBy('price', 'asc')->limit(1)])
             ->latest()
             ->get()
