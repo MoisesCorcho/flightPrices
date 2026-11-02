@@ -49,4 +49,10 @@ return [
         'measurement_id' => env('FIREBASE_MEASUREMENT_ID'),
         'vapid_key' => env('FIREBASE_VAPID_KEY'),
     ],
+
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT'),
+    ],
 ];

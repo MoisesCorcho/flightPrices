@@ -3,7 +3,6 @@
 use App\Actions\FetchFlightsAction;
 use App\Contracts\FlightProviderInterface;
 use App\DTOs\SearchCriteriaDTO;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 it('uses cache for duplicate searches', function () {
