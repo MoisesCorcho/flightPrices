@@ -47,6 +47,11 @@ class AirportSeeder extends Seeder
                 continue;
             }
 
+            // Normalization: MDE serves Medellin metropolitan area
+            if ($iata === 'MDE') {
+                $city = 'Medellin';
+            }
+
             Airport::updateOrCreate(
                 ['iata' => $iata],
                 [

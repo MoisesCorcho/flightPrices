@@ -16,24 +16,28 @@
         <form wire:submit="search" class="space-y-4">
             <!-- Origin & Destination Inputs with Swap -->
             <div class="relative flex flex-col gap-2">
-                <x-ui.select wire:model="origin" :label="__('From')" icon="flight_takeoff" placeholder="Select Origin City">
-                    @foreach($airports as $airport)
-                        <option value="{{ $airport->iata }}" class="bg-surface-container-low text-on-surface">{{ $airport->city }} ({{ $airport->iata }})</option>
-                    @endforeach
-                </x-ui.select>
+                <x-ui.searchable-select 
+                    wire:model="origin" 
+                    :airports="$airports" 
+                    :label="__('From')" 
+                    icon="flight_takeoff" 
+                    :placeholder="__('Select Origin City')" 
+                />
 
                 <!-- Swap Button -->
                 <div class="absolute right-6 top-1/2 -translate-y-1/2 z-10">
-                    <button type="button" wire:click="swap" class="bg-surface-container-highest shadow-md border border-outline-variant w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition-transform text-primary">
+                    <button type="button" wire:click="swap" class="bg-surface-container-highest shadow-md border border-outline-variant w-10 h-10 rounded-full flex items-center justify-center active:scale-90 transition-transform text-primary cursor-pointer hover:bg-surface-container-high" title="{{ __('Swap Origin and Destination') }}">
                         <span class="material-symbols-outlined">swap_vert</span>
                     </button>
                 </div>
 
-                <x-ui.select wire:model="destination" :label="__('To')" icon="flight_land" placeholder="Select Destination City">
-                    @foreach($airports as $airport)
-                        <option value="{{ $airport->iata }}" class="bg-surface-container-low text-on-surface">{{ $airport->city }} ({{ $airport->iata }})</option>
-                    @endforeach
-                </x-ui.select>
+                <x-ui.searchable-select 
+                    wire:model="destination" 
+                    :airports="$airports" 
+                    :label="__('To')" 
+                    icon="flight_land" 
+                    :placeholder="__('Select Destination City')" 
+                />
             </div>
 
             <!-- Date Picker -->
