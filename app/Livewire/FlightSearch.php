@@ -30,11 +30,12 @@ class FlightSearch extends Component
             'date' => 'required|date|after_or_equal:today',
         ]);
 
-        // Deactivate all previous searches
-        \App\Models\FlightSearch::query()->update(['is_active' => false]);
+        $user = auth()->user();
 
-        $search = \App\Models\FlightSearch::create([
-            'user_id' => User::first()?->id ?? 1,
+        // Deactivate all previous searches for this user
+        $user->searches()->update(['is_active' => false]);
+
+        $search = $user->searches()->create([
             'origin' => strtoupper($this->origin),
             'destination' => strtoupper($this->destination),
             'date' => $this->date,

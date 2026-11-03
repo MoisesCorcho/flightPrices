@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\FlightProviderInterface;
+use App\Integrations\SerpApi\SerpApiProvider;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +17,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            FlightProviderInterface::class,
+            SerpApiProvider::class
+        );
     }
 
     /**

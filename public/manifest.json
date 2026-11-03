@@ -1,22 +1,41 @@
 {
-    "name": "SkyTrack Flight Alerts",
+    "name": "SkyTrack — Flight Alerts",
     "short_name": "SkyTrack",
-    "description": "Real-time flight price monitoring and alerts.",
+    "description": "Monitoreo y alertas inteligentes de precios de vuelos en tiempo real.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#f8f9fa",
+    "orientation": "portrait",
+    "background_color": "#0f0947",
     "theme_color": "#3525cd",
     "icons": [
         {
-            "src": "/favicon.svg",
-            "sizes": "any",
-            "type": "image/svg+xml",
+            "src": "/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
             "purpose": "any"
+        },
+        {
+            "src": "/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-maskable-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         },
         {
             "src": "/apple-touch-icon.png",
             "sizes": "180x180",
             "type": "image/png"
+        },
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
         }
     ]
 }

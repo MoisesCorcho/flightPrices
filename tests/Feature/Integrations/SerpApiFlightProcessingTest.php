@@ -2,20 +2,18 @@
 
 use App\Actions\FetchFlightsAction;
 use App\Actions\ProcessFlightsAction;
+use App\Contracts\FlightProviderInterface;
+use App\DTOs\FlightDTO;
 use App\DTOs\SearchCriteriaDTO;
-use App\Integrations\SerpApi\Requests\GetGoogleFlightsRequest;
-use App\Integrations\SerpApi\SerpApiConnector;
 use App\Models\FlightResult;
 use App\Models\FlightSearch;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Saloon\Http\Faking\MockClient;
-use Saloon\Http\Faking\MockResponse;
 
 uses(RefreshDatabase::class);
 
-it('correctly processes and stores flight data from SerpApi response', function () {
+it('correctly processes and stores flight data using mocked provider', function () {
     Notification::fake();
 
     // 1. Prepare data
@@ -36,79 +34,39 @@ it('correctly processes and stores flight data from SerpApi response', function 
         currency: 'COP'
     );
 
-    // 2. Mock SerpApi Response
-    $mockResponseData = [
-        'best_flights' => [
-            [
-                'flights' => [
-                    [
-                        'departure_airport' => [
-                            'name' => 'Aeropuerto Internacional José María Córdova',
-                            'id' => 'MDE',
-                            'time' => '2026-08-11 17:00',
-                        ],
-                        'arrival_airport' => [
-                            'name' => 'Aeropuerto Internacional Los Garzones - Montería',
-                            'id' => 'MTR',
-                            'time' => '2026-08-11 18:01',
-                        ],
-                        'duration' => 61,
-                        'airplane' => 'Airbus A320',
-                        'airline' => 'JetSMART',
-                        'airline_logo' => 'https://www.gstatic.com/flights/airline_logos/70px/JA.png',
-                        'travel_class' => 'Economy',
-                        'flight_number' => 'JA 5482',
-                    ],
-                ],
-                'total_duration' => 61,
-                'price' => 151180,
-                'type' => 'One way',
-            ],
-        ],
-    ];
+    // 2. Mock FlightProviderInterface
+    $mockFlight = new FlightDTO(
+        airline_name: 'JetSMART',
+        airline_logo: 'https://www.gstatic.com/flights/airline_logos/70px/JA.png',
+        flight_number: 'JA 5482',
+        price: 151180.0,
+        departure_time: '2026-08-11 17:00',
+        arrival_time: '2026-08-11 18:01',
+        origin_code: 'MDE',
+        destination_code: 'MTR',
+        origin_name: 'Aeropuerto Internacional José María Córdova',
+        destination_name: 'Aeropuerto Internacional Los Garzones - Montería',
+        duration: '61',
+        stops: 'Non-stop',
+        cheapest: true,
+        price_status: 'Price is Low',
+    );
 
-    $mockClient = new MockClient([
-        GetGoogleFlightsRequest::class => MockResponse::make($mockResponseData, 200),
-    ]);
+    $mockProvider = Mockery::mock(FlightProviderInterface::class);
+    $mockProvider->shouldReceive('searchFlights')
+        ->once()
+        ->with(Mockery::type(SearchCriteriaDTO::class))
+        ->andReturn(collect([$mockFlight]));
 
-    // 3. Execute Fetch (Injecting MockClient)
-    // FetchFlightsAction creates its own connector, so we need a way to mock it.
-    // Let's refactor FetchFlightsAction slightly or use Saloon's global faking if available,
-    // but better to use the connector directly or mock the connector.
-    // Actually, FetchFlightsAction.php:
-    // $connector = new SerpApiConnector;
-    // $connector->send($request);
+    $this->app->instance(FlightProviderInterface::class, $mockProvider);
 
-    // Saloon doesn't have a global "fake everything" like Laravel's Http::fake() out of the box easily without changing the instance
-    // unless we use Saloon\Config::setMockClient($mockClient) if it exists, or pass the connector.
-
-    // Let's check FetchFlightsAction again.
-    /*
-    public function execute(SearchCriteriaDTO $criteria): array
-    {
-        $connector = new SerpApiConnector;
-        $request = new GetGoogleFlightsRequest($criteria);
-
-        $response = $connector->send($request);
-
-        return $response->dto();
-    }
-    */
-
-    // I'll use Saloon's MockClient by passing it to the connector.
-    // To make FetchFlightsAction testable, I should probably allow passing a connector or use a factory.
-    // For now, I'll use a trick: Saloon's MockClient can be globally registered in some versions or I can mock the Connector class.
-
-    $connector = new SerpApiConnector;
-    $connector->withMockClient($mockClient);
-
-    $request = new GetGoogleFlightsRequest($criteria);
-    $response = $connector->send($request);
-    $dtos = $response->dto();
+    // 3. Execute Action
+    $fetchAction = app(FetchFlightsAction::class);
+    $flights = $fetchAction->execute($criteria);
 
     // 4. Execute Process
-    $action = new ProcessFlightsAction;
-    $action->execute($flightSearch, $dtos);
+    $processAction = new ProcessFlightsAction;
+    $processAction->execute($flightSearch, $flights);
 
     // 5. Assertions
     expect(FlightResult::count())->toBe(1);
@@ -123,7 +81,7 @@ it('correctly processes and stores flight data from SerpApi response', function 
     expect($storedFlight->airline_logo)->toBe('https://www.gstatic.com/flights/airline_logos/70px/JA.png');
 });
 
-it('correctly handles flights with stops', function () {
+it('correctly handles flights with stops in the collection', function () {
     Notification::fake();
 
     $user = User::factory()->create();
@@ -134,44 +92,37 @@ it('correctly handles flights with stops', function () {
         'date' => '2026-08-11',
     ]);
 
-    $mockResponseData = [
-        'best_flights' => [
-            [
-                'flights' => [
-                    [
-                        'departure_airport' => ['id' => 'MDE', 'time' => '2026-08-11 10:00'],
-                        'arrival_airport' => ['id' => 'CLO', 'time' => '2026-08-11 11:00'],
-                        'airline' => 'Avianca',
-                        'flight_number' => 'AV 123',
-                    ],
-                    [
-                        'departure_airport' => ['id' => 'CLO', 'time' => '2026-08-11 13:00'],
-                        'arrival_airport' => ['id' => 'BOG', 'time' => '2026-08-11 14:00'],
-                        'airline' => 'Avianca',
-                        'flight_number' => 'AV 456',
-                    ],
-                ],
-                'total_duration' => 240,
-                'price' => 250000,
-            ],
-        ],
-    ];
+    $mockFlight = new FlightDTO(
+        airline_name: 'Avianca',
+        airline_logo: null,
+        flight_number: 'AV 123',
+        price: 250000.0,
+        departure_time: '2026-08-11 10:00',
+        arrival_time: '2026-08-11 14:00',
+        origin_code: 'MDE',
+        destination_code: 'BOG',
+        origin_name: null,
+        destination_name: null,
+        duration: '240',
+        stops: '1 stop(s)',
+        cheapest: false,
+        price_status: 'Standard price',
+    );
 
-    $mockClient = new MockClient([
-        GetGoogleFlightsRequest::class => MockResponse::make($mockResponseData, 200),
-    ]);
+    $mockProvider = Mockery::mock(FlightProviderInterface::class);
+    $mockProvider->shouldReceive('searchFlights')
+        ->once()
+        ->andReturn(collect([$mockFlight]));
 
-    $connector = new SerpApiConnector;
-    $connector->withMockClient($mockClient);
+    $this->app->instance(FlightProviderInterface::class, $mockProvider);
 
-    $request = new GetGoogleFlightsRequest(new SearchCriteriaDTO('MDE', 'BOG', '2026-08-11'));
-    $dtos = $connector->send($request)->dto();
+    $fetchAction = app(FetchFlightsAction::class);
+    $flights = $fetchAction->execute(new SearchCriteriaDTO('MDE', 'BOG', '2026-08-11'));
 
-    (new ProcessFlightsAction)->execute($flightSearch, $dtos);
+    (new ProcessFlightsAction)->execute($flightSearch, $flights);
 
     $storedFlight = FlightResult::first();
     expect($storedFlight->stops)->toBe('1 stop(s)');
     expect($storedFlight->departure_time)->toBe('2026-08-11 10:00');
-    // Here we check if it's the arrival at the final destination (BOG) or the intermediate one (CLO)
     expect($storedFlight->arrival_time)->toBe('2026-08-11 14:00');
 });

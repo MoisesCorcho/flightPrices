@@ -1,10 +1,10 @@
 <div class="bg-background text-on-surface min-h-screen flex flex-col">
     <x-ui.top-app-bar :title="__('Alert Details')" show-back back-url="{{ route('alerts.index') }}" />
 
-    <main class="flex-1 mt-16 pb-24 max-w-max-width mx-auto w-full px-container-padding-mobile pt-6 overflow-x-hidden">
+    <main class="flex-1 mt-16 pb-24 max-w-max-width mx-auto w-full px-container-padding-mobile pt-6 overflow-x-hidden space-y-6">
         <!-- Hero Alert Card -->
-        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] mb-6 border border-outline-variant/10">
-            <div class="flex flex-col gap-4 mb-8">
+        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10">
+            <div class="flex flex-col gap-4 mb-6">
                 <div class="flex justify-between items-start gap-4">
                     <div class="flex-1 min-w-0">
                         <h2 class="font-headline-lg-mobile sm:font-headline-lg text-on-surface truncate leading-tight">
@@ -44,7 +44,7 @@
             </div>
 
             <!-- Route Details -->
-            <div class="space-y-10 py-2">
+            <div class="space-y-6 pt-2 border-t border-outline-variant/10">
                 <x-flight.route-detail
                     type="outbound"
                     :time="$this->alert->outbound->time"
@@ -71,6 +71,142 @@
                     />
                 @endif
             </div>
+        </section>
+
+        <!-- Metrics Summary Cards -->
+        @if($history->total_checks > 0)
+            <section class="grid grid-cols-3 gap-3">
+                <div class="bg-surface-container-lowest rounded-xl p-3 text-center border border-outline-variant/10 shadow-sm">
+                    <p class="font-label-sm text-on-surface-variant">{{ __('Mínimo') }}</p>
+                    <p class="font-headline-md text-primary font-bold mt-0.5">${{ $history->min_price }}</p>
+                </div>
+                <div class="bg-surface-container-lowest rounded-xl p-3 text-center border border-outline-variant/10 shadow-sm">
+                    <p class="font-label-sm text-on-surface-variant">{{ __('Promedio') }}</p>
+                    <p class="font-headline-md text-on-surface font-semibold mt-0.5">${{ $history->avg_price }}</p>
+                </div>
+                <div class="bg-surface-container-lowest rounded-xl p-3 text-center border border-outline-variant/10 shadow-sm">
+                    <p class="font-label-sm text-on-surface-variant">{{ __('Chequeos') }}</p>
+                    <p class="font-headline-md text-on-surface font-semibold mt-0.5">{{ $history->total_checks }}</p>
+                </div>
+            </section>
+        @endif
+
+        <!-- Check History Section (Snapshots) -->
+        <section class="space-y-3" x-data="{ openCheck: '{{ $history->checks->first()?->id ?? '' }}' }">
+            <div class="flex items-center justify-between px-1">
+                <div>
+                    <h3 class="font-title-medium text-on-surface font-bold flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[20px]">history</span>
+                        {{ __('Historial de Chequeos') }}
+                    </h3>
+                    <p class="font-body-sm text-on-surface-variant">
+                        {{ __('Tarifas detectadas por aerolínea en cada ejecución automática.') }}
+                    </p>
+                </div>
+            </div>
+
+            @forelse($history->checks as $check)
+                <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/20 overflow-hidden shadow-sm transition-all">
+                    <!-- Check Header (Toggle button) -->
+                    <button 
+                        type="button"
+                        @click="openCheck = (openCheck === '{{ $check->id }}' ? null : '{{ $check->id }}')"
+                        class="w-full flex items-center justify-between p-4 text-left hover:bg-surface-container-low/50 transition-colors"
+                    >
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-[18px]">schedule</span>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-label-md text-on-surface font-bold truncate">
+                                    {{ $check->date_formatted }}
+                                </p>
+                                <p class="font-label-sm text-on-surface-variant">
+                                    {{ $check->diff_for_humans }} · {{ $check->options_count }} {{ __('opciones') }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0 ml-2">
+                            <div class="text-right">
+                                <span class="font-label-sm text-on-surface-variant block">{{ __('Desde') }}</span>
+                                <span class="font-title-small font-bold text-primary">${{ $check->lowest_price }}</span>
+                            </div>
+                            <span 
+                                class="material-symbols-outlined text-on-surface-variant transition-transform duration-200"
+                                :class="{ 'rotate-180': openCheck === '{{ $check->id }}' }"
+                            >
+                                expand_more
+                            </span>
+                        </div>
+                    </button>
+
+                    <!-- Check Body (Airlines list) -->
+                    <div 
+                        x-show="openCheck === '{{ $check->id }}'"
+                        x-collapse
+                        class="border-t border-outline-variant/10 bg-surface-container-low/30 p-3 space-y-2.5"
+                    >
+                        @foreach($check->flights as $flight)
+                            <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/10 shadow-xs">
+                                <div class="flex items-center gap-3 min-w-0">
+                                    <div class="w-9 h-9 rounded-md bg-surface-container flex items-center justify-center overflow-hidden shrink-0">
+                                        @if($flight->airline_logo)
+                                            <img src="{{ $flight->airline_logo }}" alt="{{ $flight->airline_name }}" class="w-7 h-7 object-contain">
+                                        @else
+                                            <span class="material-symbols-outlined text-outline text-[18px]">flight</span>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1.5 flex-wrap">
+                                            <span class="font-label-md text-on-surface font-semibold truncate">{{ $flight->airline_name }}</span>
+                                            @if($flight->cheapest)
+                                                <span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-success/15 text-success uppercase tracking-wider">
+                                                    {{ __('Mejor precio') }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <p class="font-label-sm text-on-surface-variant">
+                                            {{ $flight->departure_time }} → {{ $flight->arrival_time }} · {{ $flight->duration }}
+                                            @if($flight->stops)
+                                                · {{ $flight->stops }}
+                                            @endif
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="text-right shrink-0 ml-3">
+                                    <span class="font-title-medium font-bold text-primary">${{ $flight->price }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @empty
+                <div class="bg-surface-container-lowest rounded-xl p-6 text-center border border-outline-variant/10">
+                    <span class="material-symbols-outlined text-outline text-[32px] mb-1">hourglass_empty</span>
+                    <p class="font-label-md text-on-surface font-semibold">{{ __('Sin historial registrado aún') }}</p>
+                    <p class="font-body-sm text-on-surface-variant mt-1">
+                        {{ __('A medida que el comando programado se ejecute, aquí verás la evolución de todas las aerolíneas.') }}
+                    </p>
+                </div>
+            @endforelse
+
+            <!-- Load More Checks Button -->
+            @if($history->has_more)
+                <div class="pt-2 text-center">
+                    <button 
+                        type="button"
+                        wire:click="loadMore"
+                        wire:loading.attr="disabled"
+                        class="px-5 py-2.5 rounded-full text-sm font-semibold bg-surface-container-high hover:bg-surface-container-highest text-primary border border-outline-variant/20 transition-all inline-flex items-center gap-2 cursor-pointer active:scale-95"
+                    >
+                        <span wire:loading.remove wire:target="loadMore" class="material-symbols-outlined text-[18px]">expand_more</span>
+                        <span wire:loading wire:target="loadMore" class="material-symbols-outlined text-[18px] animate-spin">progress_activity</span>
+                        {{ __('Cargar chequeos anteriores') }}
+                    </button>
+                </div>
+            @endif
         </section>
     </main>
 

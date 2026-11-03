@@ -19,25 +19,68 @@ class CheckFlightsCommand extends Command
      */
     public function handle(FetchFlightsAction $fetchAction, ProcessFlightsAction $processAction)
     {
-        $searches = FlightSearch::where('is_active', true)->get();
+        $searches = FlightSearch::where('is_active', true)
+            ->with('user')
+            ->get()
+            ->filter(fn ($search) => $this->shouldUpdate($search));
 
-        foreach ($searches as $search) {
-            $this->info("Checking flights for: {$search->origin} -> {$search->destination} on {$search->date->format('Y-m-d')}");
+        if ($searches->isEmpty()) {
+            $this->info('No searches need updating at this time.');
+
+            return;
+        }
+
+        // Group searches by unique route to avoid duplicate API calls
+        $groupedSearches = $searches->groupBy(function ($search) {
+            return "{$search->origin}-{$search->destination}-{$search->date->format('Y-m-d')}";
+        });
+
+        foreach ($groupedSearches as $routeKey => $searchesInGroup) {
+            $firstSearch = $searchesInGroup->first();
+            $this->info("Checking flights for route: {$routeKey}");
 
             try {
                 $criteria = new SearchCriteriaDTO(
-                    origin: $search->origin,
-                    destination: $search->destination,
-                    date: $search->date->format('Y-m-d'),
+                    origin: $firstSearch->origin,
+                    destination: $firstSearch->destination,
+                    date: $firstSearch->date->format('Y-m-d'),
                 );
 
+                // This will use the cache if available (from FetchFlightsAction)
+                // but since it's a scheduled job, we want fresh data if possible.
+                // However, our cache strategy already handles deduplication.
                 $flights = $fetchAction->execute($criteria);
-                $processAction->execute($search, $flights);
 
-                $this->info('Found '.count($flights).' flights.');
+                foreach ($searchesInGroup as $search) {
+                    $processAction->execute($search, $flights);
+                }
+
+                $this->info('Processed '.count($searchesInGroup).' users for this route. Found '.count($flights).' flights.');
             } catch (\Exception $e) {
-                $this->error("Failed to check flights for search ID {$search->id}: {$e->getMessage()}");
+                $this->error("Failed to check flights for route {$routeKey}: {$e->getMessage()}");
             }
         }
+    }
+
+    protected function shouldUpdate(FlightSearch $search): bool
+    {
+        $daysToFlight = now()->diffInDays($search->date, false);
+        $lastUpdate = $search->results()->latest()->first()?->created_at;
+
+        if (! $lastUpdate) {
+            return true;
+        }
+
+        $hoursSinceLastUpdate = now()->diffInHours($lastUpdate);
+
+        if ($daysToFlight < 7) {
+            return $hoursSinceLastUpdate >= 6;
+        }
+
+        if ($daysToFlight < 30) {
+            return $hoursSinceLastUpdate >= 12;
+        }
+
+        return $hoursSinceLastUpdate >= 24;
     }
 }

@@ -10,7 +10,7 @@ use App\Notifications\PriceDropNotification;
 
 class ProcessFlightsAction
 {
-    public function execute(FlightSearch $search, array $flights): void
+    public function execute(FlightSearch $search, iterable $flights): void
     {
         foreach ($flights as $flightDto) {
             /** @var FlightDTO $flightDto */
