@@ -15,10 +15,31 @@
         <!-- Material Symbols -->
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
-        <!-- PWA -->
+        <!-- PWA & Favicons -->
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#3525cd">
+        <link rel="icon" href="/favicon.ico" sizes="any">
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
         <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+        <!-- iOS PWA Capable -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="SkyTrack">
+
+        <!-- OpenGraph / Social Sharing (WhatsApp, Telegram, Twitter, LinkedIn) -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="{{ url()->current() }}">
+        <meta property="og:title" content="SkyTrack — Monitoreo Inteligente de Vuelos">
+        <meta property="og:description" content="Rastreo automático de precios de vuelos en tiempo real con alertas instantáneas cuando bajan las tarifas.">
+        <meta property="og:image" content="{{ asset('og-image.png') }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="SkyTrack — Monitoreo Inteligente de Vuelos">
+        <meta name="twitter:description" content="Rastreo automático de precios de vuelos en tiempo real con alertas instantáneas cuando bajan las tarifas.">
+        <meta name="twitter:image" content="{{ asset('og-image.png') }}">
 
         <script>
             /**
