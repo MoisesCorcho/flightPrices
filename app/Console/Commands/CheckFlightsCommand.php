@@ -9,25 +9,28 @@ use App\Models\FlightSearch;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
-#[Signature('flights:check')]
+#[Signature('flights:check {--force : Force check ignoring adaptive timing}')]
 #[Description('Checks for flight price updates and notifies users.')]
 class CheckFlightsCommand extends Command
 {
     /**
      * Execute the console command.
      */
-    public function handle(FetchFlightsAction $fetchAction, ProcessFlightsAction $processAction)
+    public function handle(FetchFlightsAction $fetchAction, ProcessFlightsAction $processAction): int
     {
+        $force = (bool) $this->option('force');
+
         $searches = FlightSearch::where('is_active', true)
             ->with('user')
             ->get()
-            ->filter(fn ($search) => $this->shouldUpdate($search));
+            ->filter(fn ($search) => $force || $this->shouldUpdate($search));
 
         if ($searches->isEmpty()) {
             $this->info('No searches need updating at this time.');
 
-            return;
+            return self::SUCCESS;
         }
 
         // Group searches by unique route to avoid duplicate API calls
@@ -56,14 +59,25 @@ class CheckFlightsCommand extends Command
                 }
 
                 $this->info('Processed '.count($searchesInGroup).' users for this route. Found '.count($flights).' flights.');
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
+                Log::error("Failed to check flights for route {$routeKey}: {$e->getMessage()}", [
+                    'route' => $routeKey,
+                    'exception' => $e,
+                ]);
+
                 $this->error("Failed to check flights for route {$routeKey}: {$e->getMessage()}");
             }
         }
+
+        return self::SUCCESS;
     }
 
     protected function shouldUpdate(FlightSearch $search): bool
     {
+        if ($search->date->endOfDay()->isPast()) {
+            return false;
+        }
+
         $daysToFlight = now()->diffInDays($search->date, false);
         $lastUpdate = $search->results()->latest()->first()?->created_at;
 
@@ -71,7 +85,7 @@ class CheckFlightsCommand extends Command
             return true;
         }
 
-        $hoursSinceLastUpdate = now()->diffInHours($lastUpdate);
+        $hoursSinceLastUpdate = abs(now()->diffInHours($lastUpdate));
 
         if ($daysToFlight < 7) {
             return $hoursSinceLastUpdate >= 6;

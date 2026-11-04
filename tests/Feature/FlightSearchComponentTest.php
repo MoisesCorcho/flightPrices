@@ -28,8 +28,8 @@ test('authenticated user can view flight search screen with airports', function 
     $this->actingAs($user);
 
     Livewire::test(FlightSearch::class)
-        ->assertStatus(200)
-        ->assertSee('Search Flights')
+        ->assertOk()
+        ->assertSee(__('Search Flights'))
         ->assertSee('Medellin')
         ->assertSee('MDE')
         ->assertSee('Bogota')
