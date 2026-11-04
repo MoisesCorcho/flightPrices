@@ -8,5 +8,7 @@
     "Alert paused": "Alert paused",
     "Flight has already passed": "Flight has already passed",
     "Next check: on upcoming run": "Next check: on upcoming run",
-    "Next check: :time": "Next check: :time"
+    "Next check: :time": "Next check: :time",
+    "Next check: :time (:hour)": "Next check: :time (:hour)",
+    "Pending": "Pending"
 }
