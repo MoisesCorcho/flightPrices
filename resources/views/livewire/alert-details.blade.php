@@ -3,52 +3,65 @@
 
     <main class="flex-1 mt-16 pb-24 max-w-max-width mx-auto w-full px-container-padding-mobile pt-6 overflow-x-hidden space-y-6">
         <!-- Hero Alert Card -->
-        <section class="bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10">
-            <div class="flex flex-col gap-4 mb-6">
-                <div class="flex justify-between items-start gap-4">
-                    <div class="flex-1 min-w-0">
-                        <h2 class="font-headline-lg-mobile sm:font-headline-lg text-on-surface truncate leading-tight">
-                            {{ $this->alert->route_name }}
-                        </h2>
-                        <p class="font-body-md text-on-surface-variant">
-                            {{ $this->alert->dates }}
-                        </p>
-                    </div>
-
-                    <div class="text-right shrink-0">
-                        <p class="font-display-price text-primary text-3xl sm:text-4xl">
-                            ${{ $this->alert->price }}
-                        </p>
-                        <p class="font-label-sm text-outline mt-1">
-                            {{ __('Last checked: :time', ['time' => $this->alert->status_time ?? 'Never']) }}
-                        </p>
-                        <div class="flex flex-col items-end gap-1 mt-1.5">
-                            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">
-                                <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
-                                {{ $this->alert->next_check_text }}
-                            </span>
-                            <flux:badge variant="pill" size="sm" color="zinc">
-                                {{ $this->alert->frequency_label }}
-                            </flux:badge>
-                        </div>
+        <section class="bg-surface-container-lowest rounded-2xl p-4 sm:p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.05)] border border-outline-variant/10 space-y-4 mb-6">
+            <!-- Header Row: Route + Price -->
+            <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0 flex-1">
+                    <h2 class="flex items-center gap-1.5 sm:gap-2 font-headline-lg-mobile sm:font-headline-lg font-bold text-on-surface tracking-tight" title="{{ $this->alert->route_name }}">
+                        <span>{{ $this->alert->origin }}</span>
+                        <span class="material-symbols-outlined text-primary text-[18px] sm:text-[22px] shrink-0">arrow_forward</span>
+                        <span>{{ $this->alert->destination }}</span>
+                        <span class="sr-only">{{ $this->alert->route_name }}</span>
+                    </h2>
+                    <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm mt-1">
+                        <span class="material-symbols-outlined text-[16px] opacity-70">calendar_month</span>
+                        <span>{{ $this->alert->dates }}</span>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                    <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden shrink-0">
-                        @if($this->alert->airline_logo)
-                            <img src="{{ $this->alert->airline_logo }}" alt="{{ $this->alert->airline_name }}" class="w-8 h-8 object-contain">
-                        @else
-                            <span class="material-symbols-outlined text-outline text-xl">flight</span>
-                        @endif
-                    </div>
-                    <div class="min-w-0">
-                        <p class="font-label-md text-on-surface truncate">{{ $this->alert->airline_name }}</p>
-                        <p class="font-label-sm text-on-surface-variant">{{ $this->alert->flight_number }}</p>
-                    </div>
-                    <div class="ml-auto">
-                        <flux:badge variant="pill" size="sm" color="success">{{ __('Price is Low') }}</flux:badge>
-                    </div>
+                <div class="text-right shrink-0">
+                    <p class="font-display-price text-primary text-2xl sm:text-4xl font-extrabold leading-none">
+                        ${{ $this->alert->price }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tracking & Schedule Intel Bar (Full Width) -->
+            <div class="bg-surface-container-low/80 rounded-xl p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-outline-variant/10">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-xs text-on-surface-variant">
+                    <span class="inline-flex items-center gap-1 text-outline">
+                        <span class="material-symbols-outlined text-[14px]">history</span>
+                        {{ __('Last checked: :time', ['time' => $this->alert->status_time ?? 'Never']) }}
+                    </span>
+                    <span class="hidden sm:inline opacity-30">•</span>
+                    <span class="inline-flex items-center gap-1 font-medium text-on-surface">
+                        <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                        {{ $this->alert->next_check_text }}
+                    </span>
+                </div>
+
+                <div class="self-start sm:self-auto shrink-0">
+                    <flux:badge variant="pill" size="sm" color="zinc">
+                        {{ $this->alert->frequency_label }}
+                    </flux:badge>
+                </div>
+            </div>
+
+            <!-- Airline info snippet -->
+            <div class="flex items-center gap-3 p-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
+                <div class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center overflow-hidden shrink-0">
+                    @if($this->alert->airline_logo)
+                        <img src="{{ $this->alert->airline_logo }}" alt="{{ $this->alert->airline_name }}" class="w-8 h-8 object-contain">
+                    @else
+                        <span class="material-symbols-outlined text-outline text-xl">flight</span>
+                    @endif
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="font-label-md text-on-surface truncate">{{ $this->alert->airline_name }}</p>
+                    <p class="font-label-sm text-on-surface-variant">{{ $this->alert->flight_number }}</p>
+                </div>
+                <div class="shrink-0">
+                    <flux:badge variant="pill" size="sm" color="success">{{ __('Price is Low') }}</flux:badge>
                 </div>
             </div>
 

@@ -57,5 +57,7 @@
     "Alert paused": "Alerta pausada",
     "Flight has already passed": "El vuelo ya ocurrió",
     "Next check: on upcoming run": "Próximo rastreo: en la próxima corrida",
-    "Next check: :time": "Próximo rastreo: :time"
+    "Next check: :time": "Próximo rastreo: :time",
+    "Next check: :time (:hour)": "Próximo rastreo: :time (:hour)",
+    "Pending": "Pendiente"
 }
