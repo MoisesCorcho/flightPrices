@@ -1,3 +1,12 @@
 {
-    "Price Alerts Notice": "The Target Price setting ensures you'll be notified whenever the system's automatic searches find a flight at the same or a lower price. These automatic searches only occur when an alert is enabled."
+    "Price Alerts Notice": "The Target Price setting ensures you'll be notified whenever the system's automatic searches find a flight at the same or a lower price. These automatic searches only occur when an alert is enabled.",
+    "Adaptive Frequency Notice": "Our radar optimizes tracking frequency automatically: every 24h for distant flights, every 12h within the month, and every 6h during the final week.",
+    "Intensive (every 6h)": "Intensive (every 6h)",
+    "Twice daily (every 12h)": "Twice daily (every 12h)",
+    "Daily (every 24h)": "Daily (every 24h)",
+    "Flight Expired": "Flight Expired",
+    "Alert paused": "Alert paused",
+    "Flight has already passed": "Flight has already passed",
+    "Next check: on upcoming run": "Next check: on upcoming run",
+    "Next check: :time": "Next check: :time"
 }

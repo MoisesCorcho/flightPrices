@@ -58,6 +58,8 @@ class AlertDetails extends Component
             'price_drop' => 'Monitoring',
             'status_time' => $lastResult?->created_at?->diffForHumans(),
             'status' => 'Last checked: '.($lastResult?->created_at?->diffForHumans() ?? 'Never'),
+            'frequency_label' => $search->frequency_label,
+            'next_check_text' => $search->next_check_text,
             'outbound' => (object) [
                 'time' => $lastResult?->departure_time ?? 'N/A',
                 'location' => $lastResult?->origin_name ?? $search->origin,

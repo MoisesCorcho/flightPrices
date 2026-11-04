@@ -22,6 +22,15 @@
                         <p class="font-label-sm text-outline mt-1">
                             {{ __('Last checked: :time', ['time' => $this->alert->status_time ?? 'Never']) }}
                         </p>
+                        <div class="flex flex-col items-end gap-1 mt-1.5">
+                            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">
+                                <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                                {{ $this->alert->next_check_text }}
+                            </span>
+                            <flux:badge variant="pill" size="sm" color="zinc">
+                                {{ $this->alert->frequency_label }}
+                            </flux:badge>
+                        </div>
                     </div>
                 </div>
 
