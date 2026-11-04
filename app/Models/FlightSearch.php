@@ -69,14 +69,27 @@ class FlightSearch extends Model
         }
 
         $lastUpdate = $this->results()->latest()->first()?->created_at;
+        $requiredHours = $this->frequency_hours;
 
-        if (! $lastUpdate) {
-            return now();
+        // The scheduler runs every 6 hours at 00:00, 06:00, 12:00, 18:00 UTC
+        $nowUtc = now()->copy()->utc();
+        $nextHour = ((intdiv($nowUtc->hour, 6) + 1) * 6);
+        $candidate = $nowUtc->copy()->startOfDay()->addHours($nextHour);
+
+        for ($i = 0; $i < 12; $i++) {
+            if (! $lastUpdate) {
+                return $candidate;
+            }
+
+            $hoursPassed = abs($candidate->diffInHours($lastUpdate));
+            if ($hoursPassed >= $requiredHours) {
+                return $candidate;
+            }
+
+            $candidate = $candidate->copy()->addHours(6);
         }
 
-        $dueAt = $lastUpdate->copy()->addHours($this->frequency_hours);
-
-        return $dueAt->isPast() ? now() : $dueAt;
+        return $candidate;
     }
 
     public function getNextCheckTextAttribute(): string
@@ -91,10 +104,13 @@ class FlightSearch extends Model
 
         $nextAt = $this->next_check_at;
 
-        if (! $nextAt || $nextAt->isPast() || abs($nextAt->diffInMinutes(now())) <= 1) {
-            return __('Next check: on upcoming run');
+        if (! $nextAt) {
+            return __('Pending');
         }
 
-        return __('Next check: :time', ['time' => $nextAt->diffForHumans()]);
+        return __('Next check: :time (:hour)', [
+            'time' => $nextAt->diffForHumans(),
+            'hour' => '~'.$nextAt->format('H:i').' UTC',
+        ]);
     }
 }

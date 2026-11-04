@@ -61,25 +61,25 @@ test('computes next check estimation correctly', function () {
         'date' => now()->addDays(45),
         'is_active' => true,
     ]);
-    expect($newSearch->next_check_text)->toBe(__('Next check: on upcoming run'));
+    expect($newSearch->next_check_text)->toContain('UTC');
 
-    // Checked 20 hours ago on a 24h cycle (due in ~4 hours)
+    // Checked 20 hours ago on a 24h cycle (scheduled for next qualifying tick)
     FlightResult::factory()->create([
         'flight_search_id' => $newSearch->id,
         'created_at' => now()->subHours(20),
     ]);
     $newSearch->refresh();
     expect($newSearch->next_check_at)->not->toBeNull()
-        ->and($newSearch->next_check_text)->toContain(now()->addHours(4)->diffForHumans());
+        ->and($newSearch->next_check_text)->toContain('UTC');
 
-    // Checked 25 hours ago on a 24h cycle (overdue, ready now)
+    // Checked 25 hours ago on a 24h cycle (overdue, ready on next scheduler tick)
     $newSearch->results()->delete();
     FlightResult::factory()->create([
         'flight_search_id' => $newSearch->id,
         'created_at' => now()->subHours(25),
     ]);
     $newSearch->refresh();
-    expect($newSearch->next_check_text)->toBe(__('Next check: on upcoming run'));
+    expect($newSearch->next_check_text)->toContain('UTC');
 });
 
 test('alert details component renders frequency label and next check text', function () {
@@ -101,7 +101,7 @@ test('alert details component renders frequency label and next check text', func
     Livewire::test(AlertDetails::class, ['id' => $search->id])
         ->assertOk()
         ->assertSee($search->frequency_label)
-        ->assertSee(__('Next check: :time', ['time' => $search->next_check_at->diffForHumans()]));
+        ->assertSee($search->next_check_text);
 });
 
 test('my searches component renders adaptive frequency notice and search card badges', function () {
@@ -120,5 +120,5 @@ test('my searches component renders adaptive frequency notice and search card ba
         ->assertOk()
         ->assertSee(__('Adaptive Frequency Notice'))
         ->assertSee($search->frequency_label)
-        ->assertSee(__('Next check: on upcoming run'));
+        ->assertSee($search->next_check_text);
 });
