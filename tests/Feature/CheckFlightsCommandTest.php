@@ -16,6 +16,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Cache::flush();
+    Notification::fake();
 });
 
 function createSampleFlightDTO(float $price = 150000.0, string $origin = 'MDE', string $destination = 'MTR'): FlightDTO
