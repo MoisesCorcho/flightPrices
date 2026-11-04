@@ -48,5 +48,14 @@
     "Track prices and get instant notifications on price drops.": "Sigue precios y recibe notificaciones de bajas de precio.",
     "Details": "Detalles",
     "Delete Search": "Eliminar Búsqueda",
-    "Are you sure you want to delete this search?": "¿Estás seguro de que quieres eliminar esta búsqueda?"
+    "Are you sure you want to delete this search?": "¿Estás seguro de que quieres eliminar esta búsqueda?",
+    "Adaptive Frequency Notice": "Nuestro radar optimiza el rastreo automáticamente: cada 24h a más de un mes del viaje, cada 12h dentro del mes, y cada 6h durante la última semana.",
+    "Intensive (every 6h)": "Intensivo (cada 6h)",
+    "Twice daily (every 12h)": "Cada 12 horas",
+    "Daily (every 24h)": "Diario (cada 24h)",
+    "Flight Expired": "Vuelo finalizado",
+    "Alert paused": "Alerta pausada",
+    "Flight has already passed": "El vuelo ya ocurrió",
+    "Next check: on upcoming run": "Próximo rastreo: en la próxima corrida",
+    "Next check: :time": "Próximo rastreo: :time"
 }

@@ -5,9 +5,14 @@
     <div class="w-full mb-6">
         <div class="flex gap-4 p-4 bg-primary/10 border border-primary/20 rounded-2xl text-on-surface">
             <span class="material-symbols-outlined text-primary text-[24px] shrink-0">info</span>
-            <p class="font-body-sm leading-relaxed">
-                {{ __('Price Alerts Notice') }}
-            </p>
+            <div class="space-y-1.5">
+                <p class="font-body-sm leading-relaxed">
+                    {{ __('Price Alerts Notice') }}
+                </p>
+                <p class="font-label-sm text-on-surface-variant">
+                    {{ __('Adaptive Frequency Notice') }}
+                </p>
+            </div>
         </div>
     </div>
 
@@ -40,7 +45,16 @@
                             <span class="material-symbols-outlined text-[18px] opacity-70">calendar_month</span>
                             <span class="font-title-small">{{ $search->date->format('M d, Y') }}</span>
                         </div>
-                        </div>
+
+                        @if($search->is_active)
+                            <div class="flex flex-wrap items-center gap-1.5 text-xs text-on-surface-variant mt-0.5">
+                                <span class="material-symbols-outlined text-[14px] text-primary">schedule</span>
+                                <span>{{ $search->next_check_text }}</span>
+                                <span class="opacity-40">•</span>
+                                <span class="font-medium text-primary">{{ $search->frequency_label }}</span>
+                            </div>
+                        @endif
+                    </div>
 
                         <div class="flex flex-col items-end gap-2">
                         <button 
